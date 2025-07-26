@@ -7,8 +7,12 @@ services:
       - '3000:3000'
     depends_on:
       - express
+    env_file:
+      - .env
     environment:
-      - REDIS_HOST=redis
+      - NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      - NUXT_CLERK_SECRET_KEY=${NUXT_CLERK_SECRET_KEY}
+      - NUXT_API_URL=http://express:3030/
     restart: unless-stopped 
 
   express:
@@ -17,6 +21,27 @@ services:
       - '3030:3030'
     depends_on:
       - redis
+      - mongodb
     environment:
+      - MONGODB_URI=mongodb://mongodb:27017/MindForge
       - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: unless-stopped 
+
+  mongodb:
+    image: mongo:latest  # 使用官方MongoDB镜像，推荐指定版本
+    container_name: mongodb
+    restart:  unless-stopped 
+    volumes:
+      - mongodb_data:/data/db
+  
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongodb_data:
+  redis_data:
