@@ -1,0 +1,22 @@
+version: "3.8"
+
+services: 
+  nuxt-app:
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+    restart: unless-stopped # 推荐策略
+
+  express:
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+    restart: unless-stopped # 推荐策略
